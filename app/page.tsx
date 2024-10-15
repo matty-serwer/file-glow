@@ -37,6 +37,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   title: z.string().min(1).max(200),
@@ -123,7 +124,10 @@ export default function Home() {
         <h1 className="text-4xl font-bold">
           Your Files
         </h1>
-        <Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
+        <Dialog open={isFileDialogOpen} onOpenChange={(isOpen) => {
+          setIsFileDialogOpen(isOpen);
+          form.reset();
+        }}>
           <DialogTrigger asChild>
             <Button
               onClick={() => {
@@ -148,7 +152,7 @@ export default function Home() {
                         <FormItem>
                           <FormLabel>Title</FormLabel>
                           <FormControl>
-                            <Input placeholder="shadcn" {...field} />
+                            <Input {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -167,7 +171,16 @@ export default function Home() {
                         </FormItem>
                       }
                     />
-                    <Button type="submit">Submit</Button>
+                    <Button
+                      type="submit"
+                      disabled={form.formState.isSubmitting}
+                      className="flex items-center gap-1"
+                    >
+                      {form.formState.isSubmitting && (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      )}
+                      Submit
+                    </Button>
                   </form>
                 </Form>
               </DialogDescription>
