@@ -1,9 +1,13 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { getUser } from "./users";
+import { fileTypes } from "./schema";
 
+/**
+ * Generates a URL for file upload
+ * @returns {Promise<string>} The generated upload URL
+ */
 export const generateUploadUrl = mutation(async (ctx) => {
-
   const identity = await ctx.auth.getUserIdentity();
 
   if (!identity) {
@@ -13,6 +17,13 @@ export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
 });
 
+/**
+ * Checks if a user has access to an organization
+ * @param {QueryCtx | MutationCtx} ctx - The context object
+ * @param {string} tokenIdentifier - The user's token identifier
+ * @param {string} organizationId - The organization ID to check access for
+ * @returns {Promise<boolean>} Whether the user has access to the organization
+ */
 async function hasAccessToOrganization(
   ctx: QueryCtx | MutationCtx,
   tokenIdentifier: string,
@@ -23,17 +34,18 @@ async function hasAccessToOrganization(
   return user.orgIds.includes(organizationId) || user.tokenIdentifier.includes(organizationId);
 }
 
-
+/**
+ * Creates a new file entry in the database
+ */
 export const createFile = mutation({
   args: {
     name: v.string(),
     fileId: v.id("_storage"),
     organizationId: v.string(),
+    type: fileTypes,
   },
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity();
-
-    // console.log(identity);
 
     if (!identity) {
       throw new ConvexError("You must be signed in to upload a file");
@@ -49,10 +61,14 @@ export const createFile = mutation({
       name: args.name,
       organizationId: args.organizationId,
       fileId: args.fileId,
+      type: args.type,
     });
   }
 });
 
+/**
+ * Retrieves files for a given organization
+ */
 export const getFiles = query({
   args: {
     organizationId: v.string(),
@@ -74,6 +90,9 @@ export const getFiles = query({
   }
 })
 
+/**
+ * Deletes a file from the database
+ */
 export const deleteFile = mutation({
   args: { fileId: v.id('files') },
   async handler(ctx, args) {
