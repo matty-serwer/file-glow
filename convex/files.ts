@@ -72,4 +72,30 @@ export const getFiles = query({
 
     return await ctx.db.query('files').withIndex('by_organization', (q) => q.eq('organizationId', args.organizationId)).collect();
   }
-})  
+})
+
+export const deleteFile = mutation({
+  args: { fileId: v.id('files') },
+  async handler(ctx, args) {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("You do not have access to this file");
+    }
+
+    const file = await ctx.db.get(args.fileId);
+
+    if (!file) {
+      throw new ConvexError("File not found");
+    }
+
+    const hasAccess = await hasAccessToOrganization(ctx, identity.tokenIdentifier, file.organizationId);
+
+    if (!hasAccess) {
+      throw new ConvexError("You do not have access to delete this file");
+    }
+
+    // await ctx.storage.delete(file.fileId);
+    await ctx.db.delete(args.fileId)
+  }
+})
