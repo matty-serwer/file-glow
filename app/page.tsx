@@ -19,9 +19,9 @@ export default function Home() {
   const user = useUser();
 
   // Determine the organization ID (or use user ID if no organization)
-  let organizationId: string | undefined = undefined;
+  let orgId: string | undefined = undefined;
   if (organization.isLoaded && user.isLoaded) {
-    organizationId = organization.organization?.id ?? user.user?.id;
+    orgId = organization.organization?.id ?? user.user?.id;
   }
 
   // State for file dialog (not currently used, but kept for future implementation)
@@ -30,7 +30,7 @@ export default function Home() {
   // Fetch files from the API
   const files = useQuery(
     api.files.getFiles,
-    organizationId ? { organizationId } : "skip"
+    orgId ? { orgId } : "skip"
   );
   const isLoading = files === undefined;
 

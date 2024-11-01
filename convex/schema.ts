@@ -13,10 +13,11 @@ export default defineSchema({
   files: defineTable({
     name: v.string(),
     type: fileTypes,
-    organizationId: v.string(),
+    orgId: v.string(),
     fileId: v.id("_storage"),
+    url: v.string(),
   })
-    .index("by_organization", ["organizationId"]),
+    .index("by_organization", ["orgId"]),
   users: defineTable({
     tokenIdentifier: v.string(),
     orgIds: v.array(v.string()),

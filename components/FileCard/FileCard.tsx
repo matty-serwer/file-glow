@@ -26,10 +26,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-import { Doc } from "../../convex/_generated/dataModel"
+import { Doc, Id } from "../../convex/_generated/dataModel"
 import { Button } from "../ui/button";
-import { TrashIcon, MoreVerticalIcon } from "lucide-react";
+import { TrashIcon, MoreVerticalIcon, GanttChartIcon, FileTextIcon, VideoIcon, ImageIcon } from "lucide-react";
 import { typeIcons } from "@/utils/typeIcons"
+
 import { ReactNode, useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -42,6 +43,7 @@ import Image from "next/image";
  * @returns {JSX.Element} Rendered FileCardActions component
  */
 function FileCardActions({ file }: { file: Doc<"files"> }) {
+  console.log(file);
   const deleteFile = useMutation(api.files.deleteFile);
   const toast = useToast();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -97,8 +99,16 @@ function FileCardActions({ file }: { file: Doc<"files"> }) {
   )
 }
 
-function getFileUrl(file: Doc<"files">) {
-  return `${process.env.NEXT_PUBLIC_STORAGE_URL}/api/files/${file.fileId}`;
+// function getFileUrl(fileId: Id<"_storage">) {
+//   // console.log(fileId);
+//   // return `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`;
+
+//   // return api.storage.getUrl(fileId);
+// }
+
+function getFileUrl({ file }: { file: Doc<"files"> }) {
+  console.log(file);
+  return file.url
 }
 /**
  * FileCard component: Renders a card displaying file information
@@ -106,6 +116,7 @@ function getFileUrl(file: Doc<"files">) {
  * @param {Doc<"files">} props.file - The file object to display
  * @returns {JSX.Element} Rendered FileCard component
  */
+
 export default function FileCard({ file }: { file: Doc<"files"> }) {
   return (
     <Card data-testid={`file-card-${file._id}`}>
@@ -118,16 +129,34 @@ export default function FileCard({ file }: { file: Doc<"files"> }) {
           <FileCardActions file={file} />
         </div>
       </CardHeader>
-      <CardContent>
-        {file.type === "image" && <Image
-          src={file.url}
-          alt={file.name}
-          width={200}
-          height={100} />
-        }
+      <CardContent className="h-[120px] flex justify-center items-center">
+        {/* TODO: When getFileUrl is returning a link to the file image this should work */}
+        {file.type === "image" && (
+          <Image
+            src={getFileUrl({ file })}
+            alt={file.name}
+            width={80}
+            height={80} />
+        )}
+
+        {file.type === "csv" && <GanttChartIcon className="w-20 h-20" />}
+        {file.type === "pdf" && <FileTextIcon className="w-20 h-20" />}
+        {file.type === "video" && <VideoIcon className="w-20 h-20" />}
+        {file.type === "document" && <FileTextIcon className="w-20 h-20" />}
+
       </CardContent>
-      <CardFooter>
-        <Button data-testid="download-button">Download</Button>
+      <CardFooter className="flex justify-center">
+        <Button
+          data-testid="download-button"
+          onClick={async () => {
+            const url = await getFileUrl({ file });
+            console.log(url);
+            window.open(url, '_blank');
+            // TODO: Does this work on all browsers?
+          }}
+        >
+          Download
+        </Button>
       </CardFooter>
     </Card>
   );
