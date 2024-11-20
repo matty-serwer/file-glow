@@ -1,11 +1,5 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-// import "./globals.css";
 
-import { Toaster } from "@/components/ui/toaster";
-import { FilesIcon } from "lucide-react";
-import { Link, StarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 // Components
 import Sidebar from "@/components/Sidebar/Sidebar";
 import FileActions from "@/components/FileActions/FileActions";
@@ -29,7 +23,6 @@ export default function DashboardLayout({
           <div className="flex-1">
             <FileActions />
             <div id="main" className="w-full">
-              {/* <FileActions /> */}
               {children}
             </div>
           </div>
