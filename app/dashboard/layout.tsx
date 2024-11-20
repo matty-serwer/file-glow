@@ -21,7 +21,7 @@ export default function DashboardLayout({
         <div className="flex mt-12">
           <Sidebar />
           <div className="flex-1">
-            <FileActions />
+            {/* <FileActions /> */}
             <div id="main" className="w-full">
               {children}
             </div>

@@ -7,6 +7,7 @@ import { useSearch } from "@/contexts/SearchContext";
 import FileCard from "@/components/FileCard/FileCard";
 import Image from "next/image";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import FileActions from "@/components/FileActions/FileActions";
 /**
  * Home component: Displays the main page with user's files or upload prompt
  * @returns {JSX.Element} The rendered Home component
@@ -35,6 +36,7 @@ export default function FilesPage() {
   return (
 
     <div id="main" className="w-full">
+      <FileActions />
 
       {/* Loading state */}
       {isLoading && (
