@@ -89,8 +89,9 @@ export default function UploadButton() {
       await createFile({
         name: values.title,
         fileId: storageId,
-        organizationId: organizationId!,
-        type: fileTypeForDb
+        orgId: organizationId!,
+        type: fileTypeForDb,
+        url: "",
       });
 
       form.reset();

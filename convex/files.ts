@@ -43,6 +43,7 @@ export const createFile = mutation({
     fileId: v.id("_storage"),
     orgId: v.string(),
     type: fileTypes,
+    url: v.string(),
   },
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity();
@@ -62,6 +63,7 @@ export const createFile = mutation({
       orgId: args.orgId,
       fileId: args.fileId,
       type: args.type,
+      url: args.url,
     });
   }
 });
@@ -69,6 +71,7 @@ export const createFile = mutation({
 /**
  * Retrieves files for a given organization
  */
+
 export const getFiles = query({
   args: {
     orgId: v.string(),
